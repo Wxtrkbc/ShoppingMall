@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="right-content">
+        <div>
+            <ol class="breadcrumb no-radius no-margin" style="border-bottom: 1px solid #ddd;">
+
+                <li><a href="/home/index/">首页</a></li>
+                <li><a href="/pool/ipaddr/">IP资源池</a></li>
+                <li class="active">资源池</li>
+            </ol>
+        </div>
+        <div>
+
+
+            <div style="margin-top: 20px;">
+
+                <div class="clearfix mt-20">
+                    <div class="col-md-12">
+
+                        <div class="list-block">
+
+                            <div class="clearfix function-area">
+                                <div class="btn-group btn-group-sm custom-btn-group">
+                                    <a class="btn btn-default no-radius" onclick="$.CheckAll('#table-body')"><i class="fa fa-check-square"></i> 全选</a>
+                                    <a class="btn btn-default no-radius" onclick="$.UnCheckAll('#table-body',SpecialOutEditFunc)"><i class="fa fa-minus-square-o"></i> 取消</a>
+                                    <a class="btn btn-default no-radius" onclick="$.ReverseCheck('#table-body',null, SpecialOutEditFunc)"><i class="fa fa-check-square-o"></i> 反选</a>
+                                    <a class="btn btn-default no-radius" href="#" data-toggle="modal" data-keyboard="false" data-target="#do_add_modal"><i class="fa fa-plus-circle"></i> 添加</a>
+                                    <a class="btn btn-default no-radius" onclick="$.Show('#shade,#modal_delete');"><i class="fa fa-trash"></i> 删除</a>
+                                    <a id="edit_mode_target" class="btn btn-default no-radius" onclick="$.TableEditMode(this,'#table-body', null, SpecialOutEditFunc)"><i class="fa fa-pencil-square-o"></i> <span>进入编辑模式</span></a>
+                                    <a class="btn btn-default no-radius" onclick="Save()"><i class="fa fa-floppy-o"></i> 保存</a>
+                                    <a class="btn btn-default no-radius" onclick="Refresh()"><i class="fa fa-refresh"></i> 刷新</a>
+                                    <a id="handle_status" class="btn no-radius" tabindex="0" role="button" data-toggle="manual" data-container="body" data-html="true" data-placement="bottom" title="错误详细" data-content=""></a>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive table-area">
+                                <table class="table table-striped table-bordered" id="example1">
+                                    <thead id="table-head">
+                                    <tr>
+                                        <th class="col-md-1">选择</th>
+                                        <th en-sort="true" class="col-md-1 en-sort both">序号</th>
+                                        <th en-sort="true" class="col-md-3 en-sort both">IP</th>
+                                        <th en-sort="true" class="col-md-2 en-sort both">网关</th>
+                                        <th en-sort="true" class="col-md-2 en-sort both">掩码</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="table-body" edit-mode="false">
+                                        <tr auto-id="184" num="1">
+                                            <td><input type="checkbox"></td>
+                                            <td>1</td>
+                                            <td edit-enable="true" edit-type="input" name="ipaddr" origin="10.1.6.230">10.1.6.230</td>
+                                            <td edit-enable="true" edit-type="input" name="getway" origin="10.1.6.1">10.1.6.1</td>
+                                            <td edit-enable="true" edit-type="input" name="mask" origin="255.255.255.0">255.255.255.0</td>
+                                        </tr>
+                                        <tr auto-id="185" num="1">
+                                            <td><input type="checkbox"></td>
+                                            <td>1</td>
+                                            <td edit-enable="true" edit-type="input" name="ipaddr" origin="10.1.6.230">10.1.6.230</td>
+                                            <td edit-enable="true" edit-type="input" name="getway" origin="10.1.6.1">10.1.6.1</td>
+                                            <td edit-enable="true" edit-type="input" name="mask" origin="255.255.255.0">255.255.255.0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="clearfix">
+                                    <div class="right">
+                                        <ul id="pager" class="pagination pagination-sm no-margin"><li><a href="javascript:void(0)" onclick="ChangePage(1)">首页</a></li><li class="disabled"><a href="javascript:void(0)">上一页</a></li><li class="active"><a href="javascript:void(0)" onclick="ChangePage(1)">1</a></li><li><a href="javascript:void(0)" onclick="ChangePage(2)">2</a></li><li><a href="javascript:void(0)" onclick="ChangePage(3)">3</a></li><li><a href="javascript:void(0)" onclick="ChangePage(2)">下一页</a></li><li><a href="javascript:void(0)" onclick="ChangePage(3)">尾页</a></li><li><a href="javascript:void(0)">共 3页 / 44 条数据</a></li></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- 删除层开始 -->
+            <div id="modal_delete" class="alert alert-danger alert-dismissible fade in modal-delete hide" role="alert">
+                <button type="button" class="close" aria-label="Close" onclick="$.Hide('#shade,#modal_delete');"><span>×</span></button>
+                <h4>确定删除资产？</h4>
+                <div class="mt-20">与该VLAN相关联的所有IP将全部被删除！<br> &nbsp;</div>
+                <div class="clearfix">
+                    <button type="button" class="btn btn-danger right mrl-8" onclick="DoDeleteVlan();">确定删除</button>
+                    <button type="button" class="btn btn-default right mrl-8" onclick="$.Hide('#shade,#modal_delete');">取消</button>
+                </div>
+            </div>
+            <!-- 删除层结束 -->
+
+
+            <!-- 添加层开始 -->
+            <div class="modal fade" data-backdrop="static" id="do_add_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div id="do_add_form" class="form-horizontal">
+                            <div class="modal-header">
+                                <button type="button" onclick="" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                <h4 class="modal-title" id="myModalLabel" style="font-weight: normal;">新建IP（<span style="font-size: 16px;color: #666;">禁止使用 0 - 30 </span>）</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="font-weight: normal">IP段：</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" id="id_ipaddr" name="ipaddr" placeholder="X.X.X.X-X" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="font-weight: normal">VLAN：</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="id_vlan_id" name="vlan_id">
+                                            <option value="34">vlan1</option>
+                                            <option value="35">vlan2</option>
+                                            <option value="36">vlan3</option>
+                                            <option value="37">11</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="font-weight: normal">网关：</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" id="id_getway" name="getway" placeholder="网关" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="font-weight: normal">掩码：</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" id="id_mask" name="mask" placeholder="子网掩码" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="font-weight: normal">状态：</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="id_status" name="status">
+                                            <option value="0">空闲</option>
+                                            <option value="1">已占用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <span id="do_add_status" style="color: #EC6868;"></span>
+                                <button type="button" onclick="CancelModal('#do_add_form')" class="btn btn-default" data-dismiss="modal">取 消</button>
+                                <button type="button" onclick="SubmitModal('#do_add_form', '#do_add_status');" class="btn btn-primary">提 交</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 添加层结束 -->
+
+
+        </div>
+    </div>
+</body>
+</html>
